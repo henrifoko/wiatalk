@@ -80,11 +80,11 @@ export default class Compose extends React.Component {
 		this.connection.yourConn.addIceCandidate(new RTCIceCandidate(candidate));
 	}
 	handleLeave() {
-        this.connection.connectedUser = null;
-        this.connection.yourConn.close();
-        this.connection.yourConn.onicecandidat = null;
-        console.log("connection closed");
-        // this.props.endMessageResolve();
+		this.connection.connectedUser = null;
+		this.connection.yourConn.close();
+		this.connection.yourConn.onicecandidat = null;
+		console.log("connection closed");
+		// this.props.endMessageResolve();
 		// this.props.endMessageReject();
 	}
 	initializePeerConnection() {
@@ -172,7 +172,10 @@ export default class Compose extends React.Component {
 			this.connection.dataChannel.send(msg);
 			this.props.sendMessage(msg);
 		} else {
-			alert("You are not connected with a peer user");
+			alert(
+				"You are not connected with a peer user",
+				this.connection.dataChannel.readyState
+			);
 		}
 	}
 	hangUp() {
