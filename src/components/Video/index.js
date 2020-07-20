@@ -167,10 +167,15 @@ export default class Video extends Component {
 	call() {
 		// lancer l'appel
 		let callToUsername = this.props.called.telephone;
+<<<<<<< HEAD
 		if (
 			this.props.user.telephone !== callToUsername &&
 			callToUsername.length > 0
 		) {
+=======
+		if (callToUsername.length > 0) {
+            this.calling = true;
+>>>>>>> eb76610c3d359855a48c04f0ce960ceaf0b798ee
 			this.connection.connectedUser = callToUsername;
 			// if connection was previously closed, we create a new one
 			this.initializePeerConnection()
