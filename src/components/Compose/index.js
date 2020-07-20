@@ -9,18 +9,19 @@ export default class Compose extends React.Component {
 		this.connection.status = true;
 		this.connection.connectedUser = null;
 		this.connection.yourConn = null;
-		this.connection.dataChannel = null;
+        this.connection.dataChannel = null;
+        this.connection.calling = false;
 		this.connection.RTCPeerConnectionConfiguration = {
 			iceServers: [],
 		};
-		this.initWebSocket();
+		this.initConnection();
 	}
-	initWebSocket() {
+	initConnection() {
 		if (this.props.connection.ws) {
 			this.connection.ws = this.props.connection.ws;
-			this.connection.onmessage = (msg) => {
+			this.connection.ws.onmessage = (msg) => {
 				console.log("Got message", msg.data);
-				let data = JSON.parse(msg.data);
+                let data = JSON.parse(msg.data);
 				switch (data.type) {
 					case "offer":
 						this.handleOffer(data.offer, data.name);
@@ -37,10 +38,13 @@ export default class Compose extends React.Component {
 					default:
 						break;
 				}
-			};
+            };
+            this.connection.ws.onerror = function (err) {
+                console.log("Got error", err);
+            };
 			this.call();
 		} else {
-			setTimeout(() => this.initWebSocket(), 250);
+			setTimeout(() => this.initConnection(), 250);
 		}
 	}
 	send(message) {
@@ -53,7 +57,7 @@ export default class Compose extends React.Component {
 	handleOffer(offer, name) {
 		this.connection.connectedUser = name;
 		this.connection.yourConn.setRemoteDescription(
-			new RTCSessionDescription(offer)
+			new RTCSessionDescription(offer),
 		);
 		//create an answer to an offer
 		this.connection.yourConn.createAnswer(
@@ -80,14 +84,17 @@ export default class Compose extends React.Component {
 		this.connection.yourConn.addIceCandidate(new RTCIceCandidate(candidate));
 	}
 	handleLeave() {
-		this.connection.connectedUser = null;
-		this.connection.yourConn.close();
-		this.connection.yourConn.onicecandidat = null;
-		console.log("connection closed");
-		// this.props.endMessageResolve();
-		// this.props.endMessageReject();
+		try {
+			this.connection.connectedUser = null;
+			this.connection.yourConn.close();
+			this.connection.yourConn.onicecandidat = null;
+			console.log("connection closed");
+			this.props.endMessageResolve();
+		} catch (e) {
+			this.props.endMessageReject();
+		}
 	}
-	initializePeerConnection() {
+    initializePeerConnection() {
 		return new Promise((resolve, reject) => {
 			if (
 				this.connection.yourConn &&
@@ -105,7 +112,7 @@ export default class Compose extends React.Component {
 					{
 						optional: [{ RtpDataChannels: true }],
 					}
-				);
+                );
 				// Setup ice handling
 				this.connection.yourConn.onicecandidate = (event) => {
 					if (event.candidate) {
@@ -138,11 +145,12 @@ export default class Compose extends React.Component {
 	call() {
 		let callToUsername = this.props.actif.telephone;
 		if (
-			callToUsername === this.props.user.telephone &&
+			callToUsername !== this.props.user.telephone &&
 			callToUsername.length > 0
 		) {
-			this.connection.connectedUser = callToUsername;
-			this.initializePeerConnection()
+            this.calling = true;
+            this.connection.connectedUser = callToUsername;
+            this.initializePeerConnection()
 				.then(() => {
 					// create an offer
 					this.connection.yourConn.createOffer(
@@ -161,10 +169,14 @@ export default class Compose extends React.Component {
 				.catch((err) => {
 					console.error(err);
 				});
-		}
+		} else {
+            this.initializePeerConnection().then(() => {
+                console.log("connection initialisée");
+            });
+        }
 	}
 	getMessage(msg) {
-		this.props.getMessage(msg);
+		this.props.getMessage(msg, this.connection.connectedUser);
 	}
 	sendMessage(msg) {
 		//sending a message to a connected peer
@@ -175,10 +187,7 @@ export default class Compose extends React.Component {
 			this.connection.dataChannel.send(msg);
 			this.props.sendMessage(msg);
 		} else {
-			alert(
-				"You are not connected with a peer user",
-				this.connection.dataChannel.readyState
-			);
+			alert("You are not connected with a peer user");
 		}
 	}
 	hangUp() {
@@ -200,6 +209,7 @@ export default class Compose extends React.Component {
 		}
 	}
 	componentDidUpdate() {
+        this.call();
 		// if (!this.props.activeDataChannel) {
 		// 	if (!this.state.dataChannelInactive) {
 		// 		this.hangUp();
