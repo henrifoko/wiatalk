@@ -173,7 +173,7 @@ export default class Compose extends React.Component {
         }
 	}
 	getMessage(msg) {
-		this.props.getMessage(msg);
+		this.props.getMessage(msg, this.connection.connectedUser);
 	}
 	sendMessage(msg) {
 		//sending a message to a connected peer
