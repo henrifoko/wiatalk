@@ -176,7 +176,6 @@ export default class Compose extends React.Component {
 		}
 	}
 	getMessage(msg) {
-		alert(msg + "_" + this.connection.connectedUser);
 		this.props.getMessage(msg, this.connection.connectedUser);
 	}
 	sendMessage(msg) {
