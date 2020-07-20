@@ -121,15 +121,15 @@ export default class App extends React.Component {
 			return newState;
 		});
 	}
-	getMessage(msg) {
+	getMessage(msg, contact) {
 		console.log("enregistrement du message:", msg);
 		// prétraitement du message
-		while (msg.indexOf('"') !== -1) {
+		while (msg.indexOf('"') !== 1) {
 			msg = msg.replace('"', '\\"');
 		}
 		this.setState((state) => {
 			this.db.localDB.insertMessage(
-				state.actif.telephone,
+                contact,
 				state.user.telephone,
 				"TEXT",
 				msg
@@ -211,7 +211,7 @@ export default class App extends React.Component {
 					user={this.state.user}
 					onActiveChange={(contact) => this.changeActif(contact)}
 					sendMessage={(m) => this.sendMessage(m)}
-					getMessage={(m) => this.getMessage(m)}
+					getMessage={(m, c) => this.getMessage(m, c)}
 					videoCall={() => this.videoCall()}
 					audioCall={() => this.audioCall()}
 					connection={this.connection}

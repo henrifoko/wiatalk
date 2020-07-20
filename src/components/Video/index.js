@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { makeStyles} from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
 import IconButton from "@material-ui/core/IconButton";
@@ -9,7 +9,7 @@ import "./index.css";
 
 export default class Video extends Component {
 	constructor(props) {
-        super(props);
+		super(props);
 		this.useStyles = makeStyles({
 			root: {
 				maxWidth: 500,
@@ -51,6 +51,9 @@ export default class Video extends Component {
 					break;
 			}
 		};
+		this.connection.ws.addEventListener("error", (err) =>
+			console.error("Got error", err)
+		);
 	}
 	//alias for sending JSON encoded messages
 	send(message) {
@@ -61,7 +64,7 @@ export default class Video extends Component {
 		this.connection.ws.send(JSON.stringify(message));
 	}
 	handleOffer(offer, name) {
-        this.connection.connectedUser = name;
+		this.connection.connectedUser = name;
 		this.initializePeerConnection().then(() => {
 			this.connection.yourConn.setRemoteDescription(
 				new RTCSessionDescription(offer)
@@ -95,10 +98,10 @@ export default class Video extends Component {
 	handleLeave() {
 		this.connection.connectedUser = null;
 		this.setState({ remoteVideo: null });
-        this.setState({ localVideo: null }); 
-        this.connection.yourConn.close();
-        this.clearLocalVideo();
-        this.clearRemoteVideo();
+		this.setState({ localVideo: null });
+		this.connection.yourConn.close();
+		this.clearLocalVideo();
+		this.clearRemoteVideo();
 		console.log("connection closed");
 	}
 	hangUp() {
@@ -135,7 +138,7 @@ export default class Video extends Component {
 					this.setLocalVideo(stream);
 					// create a new peer connection
 					this.connection.yourConn = new RTCPeerConnection(
-						this.RTCPeerConnectionConfiguration,
+						this.RTCPeerConnectionConfiguration
 					);
 					// setup stream listening
 					this.connection.yourConn.addStream(stream);
@@ -164,8 +167,10 @@ export default class Video extends Component {
 	call() {
 		// lancer l'appel
 		let callToUsername = this.props.called.telephone;
-		if (callToUsername.length > 0) {
-            this.calling = true;
+		if (
+			this.props.user.telephone !== callToUsername &&
+			callToUsername.length > 0
+		) {
 			this.connection.connectedUser = callToUsername;
 			// if connection was previously closed, we create a new one
 			this.initializePeerConnection()
@@ -189,7 +194,11 @@ export default class Video extends Component {
 				.catch((error) => {
 					console.error(error);
 				});
-		}
+		} else {
+            this.initializePeerConnection().then(() => {
+                console.log("connection initialisée");
+            });
+        }
 	}
 	setLocalVideo(stream) {
 		this.DOM.localVideo.srcObject = stream;
@@ -204,7 +213,7 @@ export default class Video extends Component {
 		this.DOM.remoteVideo.srcObject = null;
 	}
 	componentDidMount() {
-        this.call();
+		this.call();
 		this.DOM.remoteVideo = document.getElementById("remoteVideo");
 		this.DOM.localVideo = document.getElementById("localVideo");
 	}
