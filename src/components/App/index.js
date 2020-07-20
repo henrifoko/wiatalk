@@ -26,6 +26,7 @@ export default class App extends React.Component {
 			user: USER,
 			status: null,
 			logged: false,
+			receive: null,
 		};
 		this.createConnection()
 			.then((ws) => {
@@ -42,6 +43,18 @@ export default class App extends React.Component {
 					switch (data.type) {
 						case "login":
 							this.handleLogin(data.success);
+							break;
+						case "offer-audio":
+							this.setState({
+								status: "audio-call",
+								receive: { offer: data.offer, name: data.name },
+							});
+							break;
+						case "offer-video":
+							this.setState({
+								status: "video-call",
+								receive: { offer: data.offer, name: data.name },
+							});
 							break;
 						default:
 							break;
@@ -163,7 +176,7 @@ export default class App extends React.Component {
 		}
 	}
 	hangUp() {
-		this.setState({ status: null });
+		this.setState({ status: null, receive: null });
 	}
 	componentDidMount() {
 		setTimeout(() => {
@@ -182,6 +195,7 @@ export default class App extends React.Component {
 						user={this.state.user}
 						hangUp={() => this.hangUp()}
 						websocket={this.connection.ws}
+                        receive={this.state.receive}
 					/>
 				);
 			case "audio-call":
@@ -191,6 +205,7 @@ export default class App extends React.Component {
 						user={this.state.user}
 						hangUp={() => this.hangUp()}
 						websocket={this.connection.ws}
+                        receive={this.state.receive}
 					/>
 				);
 			default:
@@ -212,7 +227,7 @@ export default class App extends React.Component {
 					audioCall={() => this.audioCall()}
 					connection={this.connection}
 					status={this.state.status}
-                    logged={this.state.logged}
+					logged={this.state.logged}
 				/>
 				{this.callPage()}
 			</div>

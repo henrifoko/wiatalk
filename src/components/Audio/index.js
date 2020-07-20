@@ -34,7 +34,7 @@ export default class Audio extends Component {
 			console.log("Got message", msg.data);
 			let data = JSON.parse(msg.data);
 			switch (data.type) {
-				case "offer":
+				case "offer-audio":
 					this.handleOffer(data.offer, data.name);
 					break;
 				case "answer":
@@ -94,9 +94,9 @@ export default class Audio extends Component {
 	handleLeave() {
 		this.connection.connectedUser = null;
 		this.setState({ remoteAudio: null });
-        this.connection.yourConn.close();
-        this.clearRemoteAudio();
-        console.log("connection closed");
+		this.connection.yourConn.close();
+		this.clearRemoteAudio();
+		console.log("connection closed");
 		this.connection.yourConn.onicecandidate = null;
 		this.connection.yourConn.onaddstream = null;
 	}
@@ -161,6 +161,10 @@ export default class Audio extends Component {
 		});
 	}
 	call() {
+		if (this.props.receive) {
+            alert("reception");
+			this.handleOffer(this.props.receive.offer, this.props.receive.name);
+		}
 		// lancer l'appel
 		let callToUsername = this.props.called.telephone;
 		if (callToUsername.length > 0) {
@@ -173,7 +177,7 @@ export default class Audio extends Component {
 					this.connection.yourConn.createOffer(
 						(offer) => {
 							this.send({
-								type: "offer",
+								type: "offer-audio",
 								offer: offer,
 							});
 							this.connection.yourConn.setLocalDescription(offer);
@@ -196,7 +200,7 @@ export default class Audio extends Component {
 		this.DOM.remoteAudio.srcObject = null;
 	}
 	componentDidMount() {
-        this.call();
+		this.call();
 		this.DOM.remoteAudio = document.getElementById("remoteAudio");
 	}
 	render() {
@@ -207,7 +211,7 @@ export default class Audio extends Component {
 						<div id="callPage" className="call-page">
 							<div className="profil">
 								<audio
-                                    className="invisible"
+									className="invisible"
 									id="remoteAudio"
 									controls
 									autoPlay

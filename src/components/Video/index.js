@@ -35,7 +35,7 @@ export default class Video extends Component {
 			console.log("Got message", msg.data);
 			let data = JSON.parse(msg.data);
 			switch (data.type) {
-				case "offer":
+				case "offer-video":
 					this.handleOffer(data.offer, data.name);
 					break;
 				case "answer":
@@ -166,6 +166,11 @@ export default class Video extends Component {
 	}
 	call() {
 		// lancer l'appel
+		if (this.props.receive) {
+            alert("reception");
+            this.handleOffer(this.props.receive.offer, this.props.receive.name);
+            return;
+		}
 		let callToUsername = this.props.called.telephone;
 		if (
 			this.props.user.telephone !== callToUsername &&
@@ -180,7 +185,7 @@ export default class Video extends Component {
 					this.connection.yourConn.createOffer(
 						(offer) => {
 							this.send({
-								type: "offer",
+								type: "offer-video",
 								offer: offer,
 							});
 							this.connection.yourConn.setLocalDescription(offer);
@@ -195,10 +200,10 @@ export default class Video extends Component {
 					console.error(error);
 				});
 		} else {
-            this.initializePeerConnection().then(() => {
-                console.log("connection initialisée");
-            });
-        }
+			this.initializePeerConnection().then(() => {
+				console.log("connection initialisée");
+			});
+		}
 	}
 	setLocalVideo(stream) {
 		this.DOM.localVideo.srcObject = stream;
