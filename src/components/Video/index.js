@@ -93,6 +93,7 @@ export default class Video extends Component {
 	}
 	//when we got an ice candidate from a remote user
 	handleCandidate(candidate) {
+        console.log(this.connection.yourConn);
 		this.connection.yourConn.addIceCandidate(new RTCIceCandidate(candidate));
 	}
 	handleLeave() {
@@ -167,7 +168,6 @@ export default class Video extends Component {
 	call() {
 		// lancer l'appel
 		if (this.props.receive) {
-            alert("reception");
             this.handleOffer(this.props.receive.offer, this.props.receive.name);
             return;
 		}
