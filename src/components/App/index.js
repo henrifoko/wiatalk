@@ -124,7 +124,7 @@ export default class App extends React.Component {
 	getMessage(msg, contact) {
 		console.log("enregistrement du message:", msg);
 		// prétraitement du message
-		while (msg.indexOf('"') !== 1) {
+		while (msg.indexOf('"') !== -1) {
 			msg = msg.replace('"', '\\"');
 		}
 		this.setState((state) => {
