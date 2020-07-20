@@ -53,7 +53,7 @@ export default class Compose extends React.Component {
 	handleOffer(offer, name) {
 		this.connection.connectedUser = name;
 		this.connection.yourConn.setRemoteDescription(
-			new RTCSessionDescription(offer)
+			new RTCSessionDescription(offer),
 		);
 		//create an answer to an offer
 		this.connection.yourConn.createAnswer(
