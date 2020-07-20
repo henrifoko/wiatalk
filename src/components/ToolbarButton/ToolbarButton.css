@@ -1,0 +1,38 @@
+.toolbar-button {
+  color: #007aff;
+  font-size: 28px;
+  transition: all 0.1s;
+}
+
+.toolbar-button:hover {
+  cursor: pointer;
+  color: #0063ce;
+}
+
+.toolbar-button:active {
+  color: #007aff;
+  opacity: 0.25;
+}
+
+.my-icon {
+    margin: auto 0px;
+    width: 22px;
+    height: 22px;
+}
+
+.my-icon:hover {
+    width: 25px;
+    height: 25px;
+}
+
+.my-icon:active {
+    width: 23px;
+    height: 23px;
+}
+
+.icon-container {
+    width: 25px;
+    height: 25px;
+    margin-left: 10px;
+    margin-right: 15px;   
+}
