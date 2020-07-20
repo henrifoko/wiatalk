@@ -84,12 +84,14 @@ export default class Compose extends React.Component {
 		this.connection.yourConn.addIceCandidate(new RTCIceCandidate(candidate));
 	}
 	handleLeave() {
-        this.connection.connectedUser = null;
-        this.connection.yourConn.close();
-        this.connection.yourConn.onicecandidat = null;
+		this.connection.connectedUser = null;
+		this.connection.yourConn.close();
+		this.connection.yourConn.onicecandidat = null;
         console.log("connection closed");
-        // this.props.endMessageResolve();
-        // this.props.endMessageReject();
+		if (this.props.endMessage.resolve) {
+			this.props.endMessage.resolve();
+		}
+		// this.props.endMessageReject();
 	}
 	initializePeerConnection() {
 		return new Promise((resolve, reject) => {
@@ -166,7 +168,7 @@ export default class Compose extends React.Component {
 				.catch((err) => {
 					console.error(err);
 				});
-		} else {
+		} else if (!this.calling) {
 			this.initializePeerConnection().then(() => {
 				console.log("connection initialisée");
 			});
@@ -206,16 +208,11 @@ export default class Compose extends React.Component {
 		}
 	}
 	componentDidUpdate() {
-		this.call();
-		// if (!this.props.activeDataChannel) {
-		// 	if (!this.state.dataChannelInactive) {
-		// 		this.hangUp();
-		// 		this.connection.dataChannelInactive = true;
-		// 	}
-		// }
-		// if (this.props.status == null) {
-		// 	this.connection.status = true;
-		// }
+		// this.call();
+		if (!this.props.activeDataChannel) {
+			this.hangUp();
+			this.connection.dataChannelInactive = true;
+		}
 	}
 	render() {
 		return (

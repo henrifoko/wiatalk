@@ -4,9 +4,9 @@ import { render } from "react-dom";
 
 export default class ToolbarButton extends React.Component {
 	handleClick(e) {
-		if (this.props.rtc) this.props.leaveMessage();
-		// alert("OK");
-		if (this.props.call) this.props.call();
+		if (this.props.rtc) this.props.leaveMessage(() => {
+            if (this.props.call) this.props.call();
+        });
 	}
 	render() {
 		const { icon } = this.props;

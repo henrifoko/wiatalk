@@ -15,22 +15,17 @@ export default class MessageList extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = { messages: [], activeDataChannel: true };
-		this.state.endMessageResolve = null;
-		this.state.endMessageReject = null;
+        this.endMessage = {};
+        this.endMessage = {};
+        this.endMessage.resolve = null;
+		this.endMessage.reject = null;
 	}
-	leaveMessage() {
+	leaveMessage(resolve, _) {
+        this.endMessage.resolve = resolve;
+        this.endMessage.reject = _;
 		this.setState({
 			activeDataChannel: false,
-			// endMessageResolve: resolve,
-			// endMessageReject: reject,
 		});
-		// return new Promise((resolve, reject) => {
-		// 	this.setState({
-		// 		activeDataChannel: false,
-		// 		endMessageResolve: resolve,
-		// 		endMessageReject: reject,
-		// 	});
-		// });
 	}
 	componentDidUpdate() {
 		const messageList = this;
@@ -139,14 +134,14 @@ export default class MessageList extends React.Component {
 							rtc={this.state.activeDataChannel}
 							icon={audio_call_image}
 							call={this.props.audioCall}
-							leaveMessage={() => this.leaveMessage()}
+							leaveMessage={(resolve, _) => this.leaveMessage(resolve, _)}
 						/>,
 						<ToolbarButton
 							key="video"
 							rtc={this.state.activeDataChannel}
 							icon={video_call_image}
 							call={this.props.videoCall}
-							leaveMessage={() => this.leaveMessage()}
+							leaveMessage={(resolve, _) => this.leaveMessage(resolve, _)}
 						/>,
 					]}
 				/>
@@ -161,7 +156,7 @@ export default class MessageList extends React.Component {
 					user={this.props.user}
 					activeDataChannel={this.state.activeDataChannel}
 					status={this.state.status}
-					// endMessageResolve={() => this.state.endMessageResolve()}
+					endMessage={this.endMessage}
 					// endMessageReject={() => this.state.endMessageReject()}
 					rightItems={[
 						<ToolbarButton key="photo" icon="ion-ios-camera" />,
