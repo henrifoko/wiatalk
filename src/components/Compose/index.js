@@ -10,14 +10,15 @@ export default class Compose extends React.Component {
 		this.connection.connectedUser = null;
 		this.connection.yourConn = null;
 		this.connection.dataChannel = null;
-		this.connection.calling = false;
+        this.connection.calling = false;
+        this.connection.logged = false;
 		this.connection.RTCPeerConnectionConfiguration = {
 			iceServers: [],
-		};
-		this.initConnection();
+        };
+        this.initConnection();
 	}
 	initConnection() {
-		if (this.props.connection.ws) {
+		if (this.props.connection.ws && this.connection.logged) {
 			this.connection.ws = this.props.connection.ws;
 			this.connection.ws.onmessage = (msg) => {
 				console.log("Got message", msg.data);
@@ -208,7 +209,8 @@ export default class Compose extends React.Component {
 		}
 	}
 	componentDidUpdate() {
-		// this.call();
+        // this.call();
+        this.connection.logged = this.props.logged;
 		if (!this.props.activeDataChannel) {
 			this.hangUp();
 			this.connection.dataChannelInactive = true;

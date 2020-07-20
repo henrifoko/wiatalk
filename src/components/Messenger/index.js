@@ -45,7 +45,7 @@ export default function Messenger(props) {
                     audioCall={props.audioCall}
                     connection={props.connection}
                     status={props.status}
-
+                    logged={props.logged}
 				/>
 			</div>
 		</div>

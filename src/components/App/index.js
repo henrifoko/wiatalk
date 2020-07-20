@@ -25,6 +25,7 @@ export default class App extends React.Component {
 			actif: USER,
 			user: USER,
 			status: null,
+			logged: false,
 		};
 		this.createConnection()
 			.then((ws) => {
@@ -88,7 +89,7 @@ export default class App extends React.Component {
 			alert("Ooops...try a different phone number");
 		} else {
 			console.log("connection successfully created to the signaling server");
-			this.connection.logged = true;
+			this.setState({ logged: true });
 		}
 	}
 	send(message) {
@@ -128,53 +129,48 @@ export default class App extends React.Component {
 			msg = msg.replace('"', '\\"');
 		}
 		this.setState((state) => {
-			this.db.localDB.insertMessage(
-                contact,
-				state.user.telephone,
-				"TEXT",
-				msg
-			);
+			this.db.localDB.insertMessage(contact, state.user.telephone, "TEXT", msg);
 			const newState = { ...state };
 			return newState;
 		});
 	}
 	videoCall() {
-		if (this.connection.logged) {
+		if (this.state.logged) {
 			if (
 				this.state.status !== "video-call" &&
 				this.state.status !== "audio-call"
 			) {
 				this.setState({ status: "video-call" });
 			} else {
-				alert("You are already calling");
+				// alert("You are already calling");
 			}
 		} else {
-			alert("You are not logged");
+			// alert("You are not logged");
 		}
 	}
 	audioCall() {
-		if (this.connection.logged) {
+		if (this.state.logged) {
 			if (
 				this.state.status !== "video-call" &&
 				this.state.status !== "audio-call"
 			) {
 				this.setState({ status: "audio-call" });
 			} else {
-				alert("You are already calling");
+				// alert("You are already calling");
 			}
 		} else {
-			alert("You are not logged");
+			// alert("You are not logged");
 		}
 	}
 	hangUp() {
-        this.setState({ status: null });        
+		this.setState({ status: null });
 	}
 	componentDidMount() {
 		setTimeout(() => {
 			this.db.localDB.listContacts((contacts) => {
 				console.log(contacts);
 				this.setState({ contacts });
-			}); 
+			});
 		}, 1000);
 	}
 	callPage() {
@@ -215,7 +211,8 @@ export default class App extends React.Component {
 					videoCall={() => this.videoCall()}
 					audioCall={() => this.audioCall()}
 					connection={this.connection}
-                    status={this.state.status}
+					status={this.state.status}
+                    logged={this.state.logged}
 				/>
 				{this.callPage()}
 			</div>

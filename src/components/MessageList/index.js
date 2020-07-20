@@ -157,6 +157,7 @@ export default class MessageList extends React.Component {
 					activeDataChannel={this.state.activeDataChannel}
 					status={this.state.status}
 					endMessage={this.endMessage}
+                    logged={this.props.logged}
 					// endMessageReject={() => this.state.endMessageReject()}
 					rightItems={[
 						<ToolbarButton key="photo" icon="ion-ios-camera" />,

@@ -1,6 +1,6 @@
 import React from "react";
 import "./ToolbarButton.css";
-import { render } from "react-dom";
+// import { render } from "react-dom";
 
 export default class ToolbarButton extends React.Component {
 	handleClick(e) {
