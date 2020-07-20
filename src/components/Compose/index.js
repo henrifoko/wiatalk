@@ -137,7 +137,10 @@ export default class Compose extends React.Component {
 	}
 	call() {
 		let callToUsername = this.props.actif.telephone;
-		if (callToUsername.length > 0) {
+		if (
+			callToUsername === this.props.user.telephone &&
+			callToUsername.length > 0
+		) {
 			this.connection.connectedUser = callToUsername;
 			this.initializePeerConnection()
 				.then(() => {
